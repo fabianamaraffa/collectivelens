@@ -105,11 +105,7 @@ The presentation explains the problem context, design choices, and results for a
 - External APIs (Claude) are **optional** and clearly isolated  
 
 ---
-## 🖥️ Prototype Preview
 
-Below are example screenshots from the interactive prototype built with Gradio.
-
----
 ## 📌 Disclaimer
 
 This project was developed as part of an **Applied AI Bootcamp by allWomen**.  
@@ -117,4 +113,8 @@ It is an educational prototype created to explore design choices, trade-offs, an
 
 The author would like to thank **allWomen** for the training, guidance, and support provided throughout the programme.
 
+## 🖥️ Prototype Preview
 
+Below are example screenshots from the interactive prototype built with Gradio.
+
+screenshot/
