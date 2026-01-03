@@ -1,2 +1,96 @@
-# collectivelens
-AI-powered semantic search for youth NGO policy documents
+# CollectiveLens – AI-powered Knowledge Intelligence for NGO Networks
+
+CollectiveLens is an **Applied AI prototype** designed to help umbrella NGOs and networks transform fragmented policy documents into a **searchable, multilingual collective intelligence system**.
+
+The project demonstrates how modern NLP and machine learning techniques can be combined—under realistic data, cost, and deployment constraints—to support **evidence-based advocacy, coordination, and decision-making**.
+
+---
+
+## 🎯 Problem Statement
+
+Umbrella NGOs coordinate dozens of member organisations that produce reports, position papers, and policy briefs across countries, languages, and years.
+
+In practice, this knowledge is often:
+- scattered across folders and websites  
+- difficult to search semantically  
+- rarely compared or synthesised  
+- underused for advocacy and policy engagement  
+
+As a result, institutional knowledge is fragmented, duplicated, and slow to mobilise.
+
+**CollectiveLens addresses this gap** by converting unstructured PDF documents into a shared, AI-powered knowledge layer.
+
+---
+
+## 🚀 Key Features
+
+- **PDF Processing**  
+  Extracts text from policy PDFs using `pdfplumber`, optimised for NGO-style documents and notebook-based environments.
+
+- **Semantic Text Representation**  
+  Uses a multilingual transformer model (`SentenceTransformers`) to encode documents as semantic embeddings, enabling meaning-based analysis across languages.
+
+- **Topic Classification (Zero-Shot)**  
+  Assigns documents to policy areas using cosine similarity between document embeddings and category descriptions—no labeled data required.
+
+- **Document Clustering**  
+  Groups documents into thematic clusters using **KMeans**, with **HDBSCAN used as a validation step** to assess cluster structure and data heterogeneity.
+
+- **Keyword & Topic Labeling**  
+  Applies **TF-IDF (with bigrams)** to extract interpretable keywords and policy-relevant phrases for each cluster.
+
+- **Summarisation (Hybrid Approach)**  
+  - **BART (local, open-source)** for offline and privacy-preserving summaries  
+  - **Claude (Anthropic API)** for high-quality, policy-grade abstractive summaries when nuance matters  
+
+- **Semantic Search & Filtering**  
+  Combines semantic similarity with metadata filters to support intuitive, policy-oriented information retrieval.
+
+- **Interactive Demo**  
+  Includes a lightweight **Gradio interface** for exploration and demonstration.
+
+---
+
+## 🧠 Technical Overview
+
+### AI Pipeline
+
+1. **PDF Extraction** – `pdfplumber`  
+2. **Text Embeddings** – `SentenceTransformers (paraphrase-multilingual-MiniLM-L12-v2)`  
+3. **Topic Classification** – Zero-shot cosine similarity  
+4. **Clustering** – KMeans (validated with HDBSCAN)  
+5. **Keyword Extraction** – TF-IDF (unigrams + bigrams)  
+6. **Summarisation** – BART (local) + Claude (LLM)  
+7. **Search & UI** – Semantic similarity + Gradio  
+
+---
+
+## 🔍 Design Choices & Trade-offs
+
+This project intentionally balances **quality, cost, privacy, and feasibility**, reflecting real-world NGO constraints.
+
+Examples:
+- **KMeans** was chosen for clustering to ensure full document coverage, while **HDBSCAN** was used to validate cluster density and identify heterogeneity.
+- **Zero-shot classification** was preferred due to the absence of labeled training data.
+- **TF-IDF** was selected for keyword extraction for its transparency and low computational cost.
+- **Hybrid summarisation** allows sensitive documents to be processed locally, while higher-quality LLM summaries are used selectively.
+
+These decisions are discussed and demonstrated directly in the notebook.
+
+---
+
+## 📁 Repository Contents
+
+- `CollectiveLens_COMPLETE_FIXED_public.ipynb` – Main end-to-end notebook  
+- `slides/` – Project presentation 
+
+This repository does **not** include the original document corpus.
+
+---
+
+## 🔐 Data & Privacy
+
+- All processing can run locally  
+- External APIs (Claude) are **optional** and clearly isolated  
+
+---
