@@ -118,8 +118,7 @@ The author would like to thank **allWomen** for the training, guidance, and supp
 Below are example screenshots from the interactive prototype built with Gradio.
 
 ### Semantic Search & Summarisation Interface
-![Gradio interface](screenshots/ui_demo1.png)
+![Gradio interface](screenshots/Ui_demo1.png)
 
 ### Analysis Dashboard
-![Clustering view](screenshots/ui_demo2.png)
-
+![Clustering view](screenshots/Ui_demo2.png)
