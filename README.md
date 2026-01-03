@@ -117,4 +117,5 @@ The author would like to thank **allWomen** for the training, guidance, and supp
 
 Below are example screenshots from the interactive prototype built with Gradio.
 
-screenshot/
+screenshots/Ui_demo1
+screenshots/Ui_demo2
