@@ -4,7 +4,7 @@ CollectiveLens is an **Applied AI prototype** designed to help umbrella NGOs and
 
 The project demonstrates how modern NLP and machine learning techniques can be combined—under realistic data, cost, and deployment constraints—to support **evidence-based advocacy, coordination, and decision-making**.
 
-🔗 **Project presentation (Canva):** https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view?utm_content=DAG7GegjF4M&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h355633b2c6
+🔗 **Project presentation (Canva):** https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view
 
 ---
 
@@ -93,7 +93,7 @@ This repository does **not** include the original document corpus.
 The project presentation is available at the following link:
 
 👉 **Canva presentation:**  
-https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view?utm_content=DAG7GegjF4M&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h355633b2c6)
+https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view
 
 The presentation explains the problem context, design choices, and results for a non-technical audience.
 
