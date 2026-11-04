@@ -16,6 +16,32 @@ SAMPLE_LIBRARY_DIR = SAMPLE_DIR / "library"
 USER_LIBRARY_DIR = ROOT / "library"
 
 
+def load_env_file(path: Path | str | None = None) -> None:
+    """Read KEY=value lines from a .env file into the environment.
+
+    Variables that are already set are never overridden, so a real environment variable always wins.
+    """
+    path = Path(path) if path else ROOT / ".env"
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError:
+        return
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        if line.startswith("export "):
+            line = line[len("export "):]
+        key, _, value = line.partition("=")
+        key, value = key.strip(), value.strip()
+        if value[:1] in {'"', "'"} and value.endswith(value[:1]) and len(value) >= 2:
+            value = value[1:-1]
+        else:
+            value = value.split(" #", 1)[0].strip()
+        if key and value and key not in os.environ:
+            os.environ[key] = value
+
+
 def _env(name: str, default: str) -> str:
     value = os.getenv(name)
     return value.strip() if value and value.strip() else default
@@ -41,9 +67,11 @@ class Settings:
     categories_file: Path = DEFAULT_CATEGORIES_FILE
     library_dir: Path | None = None
     share: bool = False
+    open_browser: bool = False
 
     @classmethod
     def from_env(cls) -> "Settings":
+        load_env_file()
         library = os.getenv("COLLECTIVELENS_LIBRARY")
         return cls(
             claude_model=_env("COLLECTIVELENS_CLAUDE_MODEL", cls.claude_model),
@@ -55,6 +83,7 @@ class Settings:
             categories_file=Path(_env("COLLECTIVELENS_CATEGORIES", str(DEFAULT_CATEGORIES_FILE))),
             library_dir=Path(library) if library else None,
             share=_env("COLLECTIVELENS_SHARE", "0").lower() in {"1", "true", "yes"},
+            open_browser=_env("COLLECTIVELENS_OPEN_BROWSER", "0").lower() in {"1", "true", "yes"},
         )
 
     def resolve_library_dir(self) -> Path:
