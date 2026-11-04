@@ -27,7 +27,7 @@ def load_runtime(settings: Settings | None = None, *, api_key: str | None = None
     settings = settings or Settings.from_env()
     categories = load_categories(settings.categories_file)
     embedder, warning = get_embedder(settings.embedder, settings.embedding_model,
-                                     settings.query_prefix, settings.passage_prefix)
+                                     settings.query_prefix, settings.passage_prefix, settings.embedding_device)
     library = open_library(settings.resolve_library_dir(), embedder, categories,
                            chunk_words=settings.chunk_words, chunk_overlap=settings.chunk_overlap)
     return Runtime(settings, library, categories, make_client(api_key), warning)

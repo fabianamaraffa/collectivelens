@@ -32,7 +32,7 @@ Umbrella NGOs coordinate many member organisations that publish reports, positio
 
 ## Try it in two minutes
 
-You need Python 3.10 or newer. The demo library is included: 13 **fictional** documents in English, Italian and French, written only to show how the app works.
+You need Python 3.12 (3.10 to 3.13 should work; do not use the very newest release, see Troubleshooting). The demo library is included: 13 **fictional** documents in English, Italian and French, written only to show how the app works.
 
 ```bash
 git clone https://github.com/fabianamaraffa/CollectiveLens.git
@@ -44,7 +44,16 @@ python app.py
 
 Open http://127.0.0.1:7860. The first start downloads the multilingual search model (about 2 GB) and takes a few minutes. To skip the download and use plain keyword matching, run `COLLECTIVELENS_EMBEDDER=lite python app.py`. The status line at the top of the app always says which mode you are in.
 
+If the semantic model cannot run on your computer, the app does not close: it switches to keyword matching and says why in the status line.
+
 Written answers need an Anthropic API key. Put it in a `.env` file (see `.env.example`) or paste it in the app under "Written answers". Without a key everything else works.
+
+### Troubleshooting
+
+- **The terminal says `Could not open requirements file`:** you are not in the project folder. Use `cd` to enter the folder that contains `app.py`.
+- **`pip` or `gradio` complains about the Python version:** Gradio 6 needs Python 3.10 or newer. The Python that comes with macOS is 3.9, so install 3.12 from python.org and use `python3.12 -m venv .venv`.
+- **The app closes with a crash report (`Python quit unexpectedly`, `SIGABRT`) while loading the model:** this was reported with Python 3.15, whose PyTorch build is too new to be reliable. Delete the `.venv` folder, install Python 3.12 and start again. Version 2.0.1 of the app checks PyTorch in a separate process first and falls back to keyword matching instead of closing.
+- **You only want to look at the interface:** start with `COLLECTIVELENS_EMBEDDER=lite python app.py` (on Windows: `set COLLECTIVELENS_EMBEDDER=lite` and then `python app.py`). Nothing is downloaded and PyTorch is not used.
 
 ## Use your own documents
 
@@ -74,6 +83,8 @@ All settings are optional environment variables (see `.env.example`).
 | `COLLECTIVELENS_CLAUDE_MODEL` | Claude model | `claude-haiku-5-5` |
 | `COLLECTIVELENS_EMBEDDER` | `auto`, `semantic` or `lite` | `auto` (semantic model, falling back to keywords with a visible notice) |
 | `COLLECTIVELENS_EMBEDDING_MODEL` | Search model | `BAAI/bge-m3` |
+| `COLLECTIVELENS_DEVICE` | Where the search model runs: `cpu` (safest), `mps` (Apple chips) or `cuda` | `cpu` |
+| `COLLECTIVELENS_SKIP_PROBE` | `1` skips the PyTorch safety check at start | off |
 | `COLLECTIVELENS_LIBRARY` | Library folder to open | `./library`, else the demo library |
 | `COLLECTIVELENS_CATEGORIES` | Your own categories file | the bundled one |
 | `COLLECTIVELENS_DAILY_LIMIT` | Calls per day made with the server's own key | 40 |
@@ -93,7 +104,7 @@ Search, topics, groups and charts run on your machine. Claude is used for two th
 
 ## Tests
 
-`python -m pytest` runs the 67 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
+`python -m pytest` runs the 71 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
 
 ## Repository
 

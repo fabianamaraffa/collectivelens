@@ -10,7 +10,11 @@ Two embedders share one interface:
 
 from __future__ import annotations
 
+import importlib.util
 import logging
+import os
+import subprocess
+import sys
 from typing import Protocol
 
 import numpy as np
@@ -72,14 +76,15 @@ class SemanticEmbedder:
     semantic = True
 
     def __init__(self, model_name: str, query_prefix: str = "", passage_prefix: str = "",
-                 max_seq_length: int = 512) -> None:
+                 max_seq_length: int = 512, device: str = "cpu") -> None:
         from sentence_transformers import SentenceTransformer  # heavy import, only when needed
 
         self.model_name = model_name
         self.name = model_name
         self.query_prefix = query_prefix
         self.passage_prefix = passage_prefix
-        self._model = SentenceTransformer(model_name)
+        # CPU by default: it is slower than a graphics chip but the most reliable on every machine.
+        self._model = SentenceTransformer(model_name, device=device)
         # Passages are about 250 tokens; a limit of 512 keeps CPU use low.
         self._model.max_seq_length = max_seq_length
 
@@ -102,14 +107,46 @@ class SemanticEmbedder:
         return self._encode(texts, self.query_prefix)
 
 
+_PROBE = "import torch; torch.nn.functional.linear(torch.ones(2, 3), torch.ones(4, 3))"
+
+
+def probe_torch(timeout: int = 180) -> str | None:
+    """Run one tiny PyTorch calculation in a separate process.
+
+    A crash inside PyTorch cannot be caught in Python: it closes the whole app (this happened with a
+    very new Python version). In a separate process the same crash is harmless, and we can fall back to
+    keyword matching. Returns None when PyTorch works, otherwise a short reason.
+    """
+    if os.getenv("COLLECTIVELENS_SKIP_PROBE", "").lower() in {"1", "true", "yes"}:
+        return None
+    if importlib.util.find_spec("torch") is None:
+        return None  # not installed: loading the model will fail on its own, with a clear message
+    try:
+        result = subprocess.run([sys.executable, "-c", _PROBE], capture_output=True, text=True, timeout=timeout)
+    except subprocess.TimeoutExpired:
+        return "PyTorch did not answer within the time limit"
+    if result.returncode == 0:
+        return None
+    how = f"signal {-result.returncode}" if result.returncode < 0 else f"exit code {result.returncode}"
+    detail = (result.stderr or "").strip().splitlines()[-1:] or [""]
+    return f"PyTorch crashed on a test calculation ({how}; Python {sys.version_info.major}.{sys.version_info.minor}). {detail[0][:100]}".strip()
+
+
 def get_embedder(mode: str = "auto", model_name: str = "BAAI/bge-m3", query_prefix: str = "",
-                 passage_prefix: str = "") -> tuple[Embedder, str | None]:
+                 passage_prefix: str = "", device: str = "cpu") -> tuple[Embedder, str | None]:
     """Return an embedder and, when the semantic model could not be used, a warning to show."""
     mode = (mode or "auto").lower()
     if mode == "lite":
         return LiteEmbedder(), None
+    problem = probe_torch()
+    if problem:
+        if mode == "semantic":
+            raise RuntimeError(problem)
+        log.warning("%s. Using keyword matching.", problem)
+        return LiteEmbedder(), (f"The semantic model cannot run on this computer, so search uses keyword matching "
+                                f"only (reason: {problem}). Python 3.12 usually works; see the README.")
     try:
-        return SemanticEmbedder(model_name, query_prefix, passage_prefix), None
+        return SemanticEmbedder(model_name, query_prefix, passage_prefix, device=device), None
     except Exception as exc:  # missing package, no network, out of memory...
         if mode == "semantic":
             raise
