@@ -1,124 +1,126 @@
-# CollectiveLens – AI-powered Knowledge Intelligence for NGO Networks
+# CollectiveLens
 
-CollectiveLens is an **Applied AI prototype** designed to help umbrella NGOs and networks transform fragmented policy documents into a **searchable, multilingual collective intelligence system**.
+Search, ask and explore a library of NGO policy documents, in several languages.
 
-The project demonstrates how modern NLP and machine learning techniques can be combined—under realistic data, cost, and deployment constraints—to support **evidence-based advocacy, coordination, and decision-making**.
+CollectiveLens is an applied AI prototype for umbrella NGOs and networks whose member organisations publish position papers and reports in different languages. It turns a folder of PDFs into a library you can search by meaning, question with cited answers, filter by policy area, organisation and year, and see from above.
 
-🔗 **Project presentation (Canva):** https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view
+Project presentation (Canva): https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view
 
----
+**Status:** version 2.0, a prototype and not production software. Version 1, the notebook I built as the capstone of the Applied AI Bootcamp by allWomen, is kept unchanged in [`legacy/`](legacy/) and tagged `v1.0-bootcamp`. [`docs/what-changed.md`](docs/what-changed.md) explains every change from version 1 to version 2 in plain language, and why I made it.
 
-## 🎯 Problem Statement
+<!-- Live demo: add the link to the Hugging Face Space here once it is online. -->
 
-Umbrella NGOs coordinate dozens of member organisations that produce reports, position papers, and policy briefs across countries, languages, and years.
+![Search results in CollectiveLens 2](screenshots/v2-search.png)
 
-In practice, this knowledge is often:
-- scattered across folders and websites  
-- difficult to search semantically  
-- rarely compared or synthesised  
-- underused for advocacy and policy engagement  
+*Screenshot taken with the demo library, in keyword mode and without a Claude key. With the semantic model, a question in one language can also find documents in another.*
 
-As a result, institutional knowledge is fragmented, duplicated, and slow to mobilise.
+## The problem
 
-**CollectiveLens addresses this gap** by converting unstructured PDF documents into a shared, AI-powered knowledge layer.
+Umbrella NGOs coordinate many member organisations that publish reports, position papers and policy briefs across countries, languages and years. In practice this knowledge is scattered across folders and websites, hard to search by meaning, rarely compared and underused for advocacy.
 
----
+## What it does
 
-## 🚀 Key Features
+1. **Reads your documents.** PDF, text and Markdown files are read, the language of each is detected, and a small metadata table adds title, organisation and year.
+2. **Summarises them.** Claude writes a two to three sentence English summary of each document, once, and the result is cached.
+3. **Splits them into passages** of about 180 words, so that every part of a document can be found and not only its opening.
+4. **Search.** A question is matched with passages. Results show the best matching passages with the matched words marked, filtered by topic, organisation, language and year.
+5. **Ask the library.** Claude answers a question using only the retrieved passages and cites them as [1], [2]. Citations that point to nothing are removed. Without a key, the app shows the matching passages instead.
+6. **Topics and groups.** Each document gets the closest of eight policy areas (the list is a file you can edit) and is placed in an automatically found group described by its distinguishing words.
+7. **Insights.** Charts of topics, topics by year, organisations, and a map of the library.
 
-- **PDF Processing**  
-  Extracts text from policy PDFs using `pdfplumber`, optimised for NGO-style documents and notebook-based environments.
+![Insights tab](screenshots/v2-insights.png)
 
-- **Semantic Text Representation**  
-  Uses a multilingual transformer model (`SentenceTransformers`) to encode documents as semantic embeddings, enabling meaning-based analysis across languages.
+## Try it in two minutes
 
-- **Topic Classification (Zero-Shot)**  
-  Assigns documents to policy areas using cosine similarity between document embeddings and category descriptions—no labeled data required.
+You need Python 3.10 or newer. The demo library is included: 13 **fictional** documents in English, Italian and French, written only to show how the app works.
 
-- **Document Clustering**  
-  Groups documents into thematic clusters using **KMeans**, with **HDBSCAN used as a validation step** to assess cluster structure and data heterogeneity.
+```bash
+git clone https://github.com/fabianamaraffa/CollectiveLens.git
+cd CollectiveLens
+python -m venv .venv && source .venv/bin/activate    # on Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
+```
 
-- **Keyword & Topic Labeling**  
-  Applies **TF-IDF (with bigrams)** to extract interpretable keywords and policy-relevant phrases for each cluster.
+Open http://127.0.0.1:7860. The first start downloads the multilingual search model (about 2 GB) and takes a few minutes. To skip the download and use plain keyword matching, run `COLLECTIVELENS_EMBEDDER=lite python app.py`. The status line at the top of the app always says which mode you are in.
 
-- **Summarisation (Hybrid Approach)**  
-  - **BART (local, open-source)** for offline and privacy-preserving summaries  
-  - **Claude (Anthropic API)** for high-quality, policy-grade abstractive summaries when nuance matters  
+Written answers need an Anthropic API key. Put it in a `.env` file (see `.env.example`) or paste it in the app under "Written answers". Without a key everything else works.
 
-- **Semantic Search & Filtering**  
-  Combines semantic similarity with metadata filters to support intuitive, policy-oriented information retrieval.
+## Use your own documents
 
-- **Interactive Demo**  
-  Includes a lightweight **Gradio interface** for exploration and demonstration.
+1. Put your PDFs in a folder, for example `pdfs/`.
+2. Create `metadata.csv` with the columns `file_name`, `title`, `member_org`, `publication_year` and, if you have it, `source_url`. The `file_name` value is matched to each file name (the `.pdf` ending is optional).
+3. Build the library:
 
----
+   ```bash
+   export ANTHROPIC_API_KEY=...      # optional: needed only for the summaries
+   python -m collectivelens build --input pdfs/ --metadata metadata.csv
+   ```
 
-## 🧠 Technical Overview
+   This creates `library/` (ignored by git, because it holds the full text of your documents). Files that cannot be read are skipped with a message, and scanned PDFs without text need OCR first.
+4. Start the app with `python app.py`. It opens `library/` when it exists and the demo library otherwise.
 
-### AI Pipeline
+To check the automatic topics, add a `gold_topic` column to the metadata with the topic a person would choose for some documents, then run `python -m collectivelens eval`. It reports how often the two agree and lists the disagreements. To use CollectiveLens in another field, edit [`collectivelens/categories.yaml`](collectivelens/categories.yaml).
 
-1. **PDF Extraction** – `pdfplumber`  
-2. **Text Embeddings** – `SentenceTransformers (paraphrase-multilingual-MiniLM-L12-v2)`  
-3. **Topic Classification** – Zero-shot cosine similarity  
-4. **Clustering** – KMeans (validated with HDBSCAN)  
-5. **Keyword Extraction** – TF-IDF (unigrams + bigrams)  
-6. **Summarisation** – BART (local) + Claude (LLM)  
-7. **Search & UI** – Semantic similarity + Gradio  
+Other commands: `python -m collectivelens search "your question"` searches from the terminal, and `python -m collectivelens --help` lists everything. If you already have summaries from version 1, pass them with `--summaries-file raw_documents.json` and they are reused instead of paid for again.
 
----
+## Settings
 
-## 🔍 Design Choices & Trade-offs
+All settings are optional environment variables (see `.env.example`).
 
-This project intentionally balances **quality, cost, privacy, and feasibility**, reflecting real-world NGO constraints.
+| Variable | Purpose | Default |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | Summaries and written answers | none |
+| `COLLECTIVELENS_CLAUDE_MODEL` | Claude model | `claude-haiku-5-5` |
+| `COLLECTIVELENS_EMBEDDER` | `auto`, `semantic` or `lite` | `auto` (semantic model, falling back to keywords with a visible notice) |
+| `COLLECTIVELENS_EMBEDDING_MODEL` | Search model | `BAAI/bge-m3` |
+| `COLLECTIVELENS_LIBRARY` | Library folder to open | `./library`, else the demo library |
+| `COLLECTIVELENS_CATEGORIES` | Your own categories file | the bundled one |
+| `COLLECTIVELENS_DAILY_LIMIT` | Calls per day made with the server's own key | 40 |
+| `COLLECTIVELENS_SHARE` | `1` creates a temporary public link | off |
 
-Examples:
-- **KMeans** was chosen for clustering to ensure full document coverage, while **HDBSCAN** was used to validate cluster density and identify heterogeneity.
-- **Zero-shot classification** was preferred due to the absence of labeled training data.
-- **TF-IDF** was selected for keyword extraction for its transparency and low computational cost.
-- **Hybrid summarisation** allows sensitive documents to be processed locally, while higher-quality LLM summaries are used selectively.
+## Privacy
 
-These decisions are discussed and demonstrated directly in the notebook.
+Search, topics, groups and charts run on your machine. Claude is used for two things: summaries (the document text is sent to the Anthropic API) and answers (the question and the retrieved passages are sent). Do not use confidential documents unless your data policy allows it. A key pasted into the app is used for that session only and is not saved. Version 1 created a public link on every launch; version 2 does not, unless you ask for it.
 
----
+## Limits
 
-## 📁 Repository Contents
+- **Topics are a first pass.** They come from comparing each document with a one-line description of each area, and they can be wrong. The app shows a similarity and flags documents that sit between two topics, and `eval` measures agreement with your own labels. On the demo library, whose documents I wrote to fit the topics, keyword mode agrees on 12 of 13: a smoke test and not evidence of accuracy. I have not yet measured agreement on the original 93 documents.
+- **Answers can be wrong.** They are limited to the retrieved passages and must cite them, but check the cited passages before relying on an answer.
+- **Cross-language search depends on the semantic model.** The model is multilingual, but I have not yet measured how well it works across my languages. In keyword mode, only shared words match.
+- **The eight categories are about youth, education and EU policy**, because that was the corpus of version 1.
+- **The original library is not included.** It belongs to the member organisations that wrote the documents.
 
-- `CollectiveLens_COMPLETE_FIXED_public.ipynb` – Main end-to-end notebook  
+## Tests
 
-This repository does **not** include the original document corpus.
+`python -m pytest` runs the 67 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
 
----
-## 🎤 Presentation
+## Repository
 
-The project presentation is available at the following link:
+```
+app.py                     starts the web app (also the entry point on Hugging Face Spaces)
+collectivelens/            the package: ingest, passages, search, ask, topics, charts, interface
+  categories.yaml          the policy areas (edit this for another field)
+data/sample/               the fictional demo library and its source files
+docs/what-changed.md       what changed from version 1 and why
+docs/deploy-hugging-face.md   how to put the demo online for free
+legacy/                    version 1, unchanged (notebook, original README, screenshots)
+tests/                     automated tests
+CHANGELOG.md               list of changes by version
+```
 
-👉 **Canva presentation:**  
-https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yoW_mk_prg-S3sg/view
+## Next steps
 
-The presentation explains the problem context, design choices, and results for a non-technical audience.
+- Measure topic agreement and search quality on a hand-labelled sample of the original library.
+- Compare the semantic model with a lighter one for small free servers.
+- Add OCR for scanned PDFs.
 
----
+## How I built this
 
-## 🔐 Data & Privacy
+I am not an engineer. I wrote the code with the help of LLMs, and I can follow what it does thanks to the Applied AI Bootcamp by allWomen. Version 2 was written with Claude: I set the goals and the choices (keep the original, a free online demo, a fictional demo library), and Claude wrote and tested the code. [`docs/what-changed.md`](docs/what-changed.md) lists what was changed and what could not be checked.
 
-- All processing can run locally  
-- External APIs (Claude) are **optional** and clearly isolated  
+## Disclaimer
 
----
+Version 1 was developed as part of the Applied AI Bootcamp by allWomen, as an educational prototype to explore design choices, trade-offs and responsible use of AI in a policy and NGO context. Thanks to allWomen for the training, guidance and support.
 
-## 📌 Disclaimer
-
-This project was developed as part of an **Applied AI Bootcamp by allWomen**.  
-It is an educational prototype created to explore design choices, trade-offs, and responsible use of AI techniques in a real-world policy and NGO context.
-
-The author would like to thank **allWomen** for the training, guidance, and support provided throughout the programme.
-
-## 🖥️ Prototype Preview
-
-Below are example screenshots from the interactive prototype built with Gradio.
-
-### Semantic Search & Summarisation Interface
-![Gradio interface](screenshots/Ui_demo1.png)
-
-### Analysis Dashboard
-![Clustering view](screenshots/Ui_demo2.png)
+Author: Fabiana Maraffa. License: MIT.

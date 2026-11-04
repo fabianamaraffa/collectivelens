@@ -1,0 +1,25 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      # The semantic model is large and not needed here: the tests run in keyword (lite) mode
+      # and use a fake model and a fake Claude client.
+      - name: Install
+        run: |
+          grep -v -e '^#' -e '^$' -e sentence-transformers requirements.txt > requirements-ci.txt
+          pip install -r requirements-ci.txt pytest
+      - name: Test
+        run: python -m pytest -q
+        env:
+          COLLECTIVELENS_EMBEDDER: lite
