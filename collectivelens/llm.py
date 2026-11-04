@@ -14,6 +14,9 @@ class LLMError(RuntimeError):
 
 def make_client(api_key: str | None = None):
     """An Anthropic client, or None when there is no key or the package is missing."""
+    from .config import load_env_file
+
+    load_env_file()  # lets a .env file next to the code hold the key
     key = (api_key or os.getenv("ANTHROPIC_API_KEY") or "").strip()
     if not key:
         return None

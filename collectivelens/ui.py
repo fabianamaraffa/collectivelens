@@ -264,7 +264,7 @@ def build_app(runtime: Runtime | None = None) -> gr.Blocks:
 def launch_kwargs(*, share: bool | None = None, port: int | None = None) -> dict:
     settings = Settings.from_env()
     kwargs = dict(theme=THEME, css=CSS, share=settings.share if share is None else share, show_error=True,
-                  footer_links=["gradio"])
+                  footer_links=["gradio"], inbrowser=settings.open_browser)
     if port:
         kwargs["server_port"] = port
     return kwargs

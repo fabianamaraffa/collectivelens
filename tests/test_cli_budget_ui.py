@@ -64,3 +64,23 @@ def test_runtime_and_app_build_with_the_sample_library(monkeypatch):
     rt = load_runtime(Settings.from_env().__class__(embedder="lite"))
     assert rt.library.is_sample or rt.library.docs
     assert build_app(rt) is not None
+
+
+def test_env_file_is_read_but_never_overrides(tmp_path, monkeypatch):
+    from collectivelens.config import load_env_file
+
+    env = tmp_path / ".env"
+    env.write_text(
+        "# comment\nANTHROPIC_API_KEY=sk-test-123  # trailing note\nCL_A=\"quoted value\"\nexport CL_B='single'\n"
+        "CL_ALREADY=from-file\nCL_EMPTY=\nnot a line\n", encoding="utf-8")
+    for name in ("ANTHROPIC_API_KEY", "CL_A", "CL_B", "CL_EMPTY"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("CL_ALREADY", "from-environment")
+    load_env_file(env)
+    import os
+
+    assert os.environ["ANTHROPIC_API_KEY"] == "sk-test-123" and os.environ["CL_A"] == "quoted value"
+    assert os.environ["CL_B"] == "single" and os.environ["CL_ALREADY"] == "from-environment"
+    assert "CL_EMPTY" not in os.environ
+    load_env_file(tmp_path / "missing.env")  # a missing file is fine
+    monkeypatch.delenv("ANTHROPIC_API_KEY")  # keep the test from leaking the fake key

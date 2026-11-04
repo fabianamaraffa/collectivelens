@@ -34,10 +34,14 @@ Umbrella NGOs coordinate many member organisations that publish reports, positio
 
 You need Python 3.12 (3.10 to 3.13 should work; do not use the very newest release, see Troubleshooting). The demo library is included: 13 **fictional** documents in English, Italian and French, written only to show how the app works.
 
+**On a Mac, the easy way:** install Python 3.12 from python.org (once), then double-click `start-mac.command`. The first time it creates a private environment, installs everything, asks for your Anthropic API key (optional, it is saved only in a `.env` file on your computer) and opens the app in your browser. If macOS refuses to open the file, right-click it, choose Open, then Open again.
+
+**Anywhere, from the terminal:**
+
 ```bash
 git clone https://github.com/fabianamaraffa/CollectiveLens.git
 cd CollectiveLens
-python -m venv .venv && source .venv/bin/activate    # on Windows: .venv\Scripts\activate
+python3.12 -m venv .venv && source .venv/bin/activate    # on Windows: py -3.12 -m venv .venv, then .venv\Scripts\activate
 pip install -r requirements.txt
 python app.py
 ```
@@ -46,7 +50,7 @@ Open http://127.0.0.1:7860. The first start downloads the multilingual search mo
 
 If the semantic model cannot run on your computer, the app does not close: it switches to keyword matching and says why in the status line.
 
-Written answers need an Anthropic API key. Put it in a `.env` file (see `.env.example`) or paste it in the app under "Written answers". Without a key everything else works.
+Written answers need an Anthropic API key. It is not included in a Claude subscription: it comes from console.anthropic.com, where you add a small credit. A question to the library uses a few thousand tokens, which with the default Haiku model costs a fraction of a cent. Put the key in a `.env` file (see `.env.example`; the Mac launcher does this for you) or paste it in the app under "Written answers". Without a key everything else works.
 
 ### Troubleshooting
 
@@ -104,7 +108,7 @@ Search, topics, groups and charts run on your machine. Claude is used for two th
 
 ## Tests
 
-`python -m pytest` runs the 71 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
+`python -m pytest` runs the 72 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
 
 ## Repository
 
