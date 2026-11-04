@@ -1,4 +1,4 @@
-# CollectiveLens 2.x. Python 3.10 or newer (Gradio 6 requires it).
+# CollectiveLens 2.x. Use Python 3.12 (Gradio 6 needs 3.10 or newer; PyTorch is not reliable on the newest Python releases).
 gradio>=6.0,<7
 anthropic>=2.0
 pdfplumber>=0.11

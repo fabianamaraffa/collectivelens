@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.0.1
+
+- A crash inside PyTorch (reported on a Mac with Python 3.15) closed the whole app. The app now runs a tiny PyTorch calculation in a separate process before loading the search model, and falls back to keyword matching, with a notice, if that crashes.
+- The search model runs on the CPU by default (`COLLECTIVELENS_DEVICE`), the most reliable choice.
+- README: Python 3.12 recommended, a troubleshooting section, and the new settings.
+
+
 ## 2.0.0
 
 Version 1 is untouched in `legacy/` and tagged `v1.0-bootcamp`. The eight policy categories are the same as in version 1, so results stay comparable.
@@ -30,7 +37,7 @@ Version 1 is untouched in `legacy/` and tagged `v1.0-bootcamp`. The eight policy
 - A demo library of 13 fictional documents in English, Italian and French, so the app runs without any private data.
 - A command line (`build`, `eval`, `search`, `app`), summary caching, and reuse of summaries from version 1.
 - A daily cap on calls made with the server's own API key, for public demos.
-- 67 automated tests and a GitHub workflow that runs them.
+- 71 automated tests and a GitHub workflow that runs them.
 - Documentation: what changed and why, and how to put the demo online on Hugging Face Spaces.
 
 ## 1.0 (tag `v1.0-bootcamp`)

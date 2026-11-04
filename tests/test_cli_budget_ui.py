@@ -42,6 +42,8 @@ def test_settings_from_env(monkeypatch):
     monkeypatch.delenv("COLLECTIVELENS_EMBEDDER", raising=False)  # CI sets it to "lite"
     s = Settings.from_env()
     assert s.claude_model == "claude-test" and s.share is True and s.embedder == "auto"
+    monkeypatch.delenv("COLLECTIVELENS_DEVICE", raising=False)
+    assert Settings.from_env().embedding_device == "cpu"
 
 
 def test_categories_file_is_validated(tmp_path):

@@ -29,6 +29,7 @@ class Settings:
     # model cannot load; "lite" never downloads a model.
     embedder: str = "auto"
     embedding_model: str = "BAAI/bge-m3"
+    embedding_device: str = "cpu"  # "cpu" is the safe choice; "mps" (Apple) or "cuda" can be faster
     query_prefix: str = ""
     passage_prefix: str = ""
     chunk_words: int = 180
@@ -48,6 +49,7 @@ class Settings:
             claude_model=_env("COLLECTIVELENS_CLAUDE_MODEL", cls.claude_model),
             embedder=_env("COLLECTIVELENS_EMBEDDER", cls.embedder).lower(),
             embedding_model=_env("COLLECTIVELENS_EMBEDDING_MODEL", cls.embedding_model),
+            embedding_device=_env("COLLECTIVELENS_DEVICE", cls.embedding_device).lower(),
             query_prefix=os.getenv("COLLECTIVELENS_QUERY_PREFIX", ""),
             passage_prefix=os.getenv("COLLECTIVELENS_PASSAGE_PREFIX", ""),
             categories_file=Path(_env("COLLECTIVELENS_CATEGORIES", str(DEFAULT_CATEGORIES_FILE))),

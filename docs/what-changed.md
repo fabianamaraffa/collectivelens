@@ -26,7 +26,7 @@ The short version: version 1 worked as a bootcamp demo, but some parts did less 
 
 **Now.** `BAAI/bge-m3`, a multilingual model that reads long passages and is released under the MIT licence. It is a larger download (about 2 GB). If it cannot be loaded (no internet, not enough memory), the app does not crash: it switches to plain keyword matching and shows a notice at the top. Keyword mode only finds documents that share words with your question, so it cannot find an Italian document with an English question.
 
-**What I could not check.** The environment where this update was written could not download the model, so the semantic path is covered by tests with a stand-in model but has not been run with the real one. Run the app once on your machine and look at the status line: it should say "Search by meaning".
+**What I could not check.** The environment where this update was written could not download the model, so the semantic path is covered by tests with a stand-in model but has not been run with the real one. The first real run, on a Mac with Python 3.15, ended in a crash inside PyTorch; version 2.0.1 therefore tests PyTorch in a separate process before loading the model, uses the CPU by default, and recommends Python 3.12. Run the app once on your machine and look at the status line: it should say "Search by meaning".
 
 ## 4. "Confidence" was not confidence
 
