@@ -1,0 +1,38 @@
+# Changelog
+
+## 2.0.0
+
+Version 1 is untouched in `legacy/` and tagged `v1.0-bootcamp`. The eight policy categories are the same as in version 1, so results stay comparable.
+
+### Fixed
+
+- The README of version 1 described BART, HDBSCAN, TF-IDF and UMAP, which were not in the code. The README now describes what the code does.
+- Search now reads whole documents. Version 1 embedded each document as one block, but its model only reads the first part (about 128 tokens), so most of every document was ignored. Documents are now split into passages of about 180 words.
+- Claude calls no longer break when a model returns a thinking block before its answer (version 1 read the first block only). Answers are read from the text blocks.
+- Language detection is repeatable (fixed seed). Before, the same document could get a different language on different runs.
+- A document that cannot be read is skipped with a message and no longer stops the whole build.
+- The retired Claude models `claude-3-haiku-20240307` and `claude-3-5-haiku-20241022` were replaced. The default is now `claude-haiku-5-5`, changeable with `COLLECTIVELENS_CLAUDE_MODEL`.
+- The app no longer creates a public link on launch (`share=True` in version 1).
+- Summaries use up to 30,000 characters of each document instead of 8,000.
+
+### Changed
+
+- The "Avg Confidence 47%" figure was the mean cosine similarity between documents and category descriptions, which is not a measure of being right. It is now called similarity, documents between two topics are flagged, and `eval` measures agreement with topics chosen by a person.
+- Search results show the best matching passages. The per-result "Why is this relevant?" call to Claude was removed (cheaper, faster, and the evidence is visible).
+- Clusters are labelled with distinguishing words computed from the documents (KeyBERT was dropped). The number of groups is chosen automatically.
+- The default search model is the multilingual `BAAI/bge-m3`. If it cannot be loaded, the app falls back to keyword matching and says so on screen.
+- Settings come from environment variables and a categories file, so no code edit is needed.
+
+### Added
+
+- A new interface in Gradio 6: Search, Ask the library, Browse, Insights and About tabs, filters, a status line, dark mode and a layout that works on a phone.
+- "Ask the library": answers written from retrieved passages only, with numbered citations that are checked.
+- A demo library of 13 fictional documents in English, Italian and French, so the app runs without any private data.
+- A command line (`build`, `eval`, `search`, `app`), summary caching, and reuse of summaries from version 1.
+- A daily cap on calls made with the server's own API key, for public demos.
+- 67 automated tests and a GitHub workflow that runs them.
+- Documentation: what changed and why, and how to put the demo online on Hugging Face Spaces.
+
+## 1.0 (tag `v1.0-bootcamp`)
+
+The notebook built as the capstone of the Applied AI Bootcamp by allWomen. See [`legacy/`](legacy/).
