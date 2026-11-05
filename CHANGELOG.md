@@ -4,6 +4,7 @@
 
 - Colab notebook: the app now starts as its own program instead of inside the notebook. On the first real Colab run, the installation updated Pillow while Colab already had the old version loaded, and the search model failed to load with an ImportError. A separate program always sees the installed packages as they are, so no restart is needed.
 - Colab notebook: step 1 checks that the demo library is present and replaces an incomplete earlier upload.
+- README: screenshots from a real run with the semantic model (status line and Insights tab).
 
 
 ## 2.0.3

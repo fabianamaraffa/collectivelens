@@ -26,7 +26,7 @@ The short version: version 1 worked as a bootcamp demo, but some parts did less 
 
 **Now.** `BAAI/bge-m3`, a multilingual model that reads long passages and is released under the MIT licence. It is a larger download (about 2 GB). If it cannot be loaded (no internet, not enough memory), the app does not crash: it switches to plain keyword matching and shows a notice at the top. Keyword mode only finds documents that share words with your question, so it cannot find an Italian document with an English question.
 
-**What I could not check.** The environment where this update was written could not download the model, so the semantic path is covered by tests with a stand-in model but has not been run with the real one. The first real run, on a Mac with Python 3.15, ended in a crash inside PyTorch; version 2.0.1 therefore tests PyTorch in a separate process before loading the model, uses the CPU by default, and recommends Python 3.12. Run the app once on your machine and look at the status line: it should say "Search by meaning".
+**What I could not check.** The environment where this update was written could not download the model, so the semantic path is covered by tests with a stand-in model but has not been run with the real one. The first real run, on a Mac with Python 3.15, ended in a crash inside PyTorch; version 2.0.1 therefore tests PyTorch in a separate process before loading the model, uses the CPU by default, and recommends Python 3.12. A later run on the demo library did load the real model and the status line said "Search by meaning" (see the screenshots in the README), but search quality has not been measured on real documents. Run the app once on your machine and look at the status line: it should say "Search by meaning".
 
 ## 4. "Confidence" was not confidence
 
@@ -85,7 +85,7 @@ The idea, the eight policy areas, the use of Claude for summaries, the multiling
 
 Be clear about these before relying on the tool:
 
-1. The real semantic model has not been run end to end (see section 3).
+1. The real semantic model was loaded once on the demo library, but its search quality has not been measured on real documents (see section 3).
 2. Live calls to Claude have not been run. Summaries and answers are covered by tests with a stand-in client that mimics the real response format, including a thinking block and a model that rejects the thinking setting. Run `python -m collectivelens build` and one question with your key to confirm.
 3. The topic categories and summaries have not been compared with a hand-labelled sample of your real documents. That is what `eval` is for.
 4. The notebook in `legacy/` was cleaned of secrets and updated to a current model, but was not re-run on the original library. Run it once before you publish it.
