@@ -1,10 +1,14 @@
-pdfplumber
-sentence-transformers
-scikit-learn
-pandas
-numpy
-transformers
-torch
-umap-learn
-hdbscan
-gradio
+# CollectiveLens 2.x. Use Python 3.12 (Gradio 6 needs 3.10 or newer; PyTorch is not reliable on the newest Python releases).
+gradio>=6.0,<7
+anthropic>=2.0
+pdfplumber>=0.11
+langdetect>=1.0.9
+scikit-learn>=1.4
+scipy>=1.11
+numpy>=1.26
+pandas>=2.1
+matplotlib>=3.8
+pyyaml>=6.0
+# The multilingual search model. Large download (it also installs PyTorch); without it the app
+# still runs in keyword mode.
+sentence-transformers>=3.0

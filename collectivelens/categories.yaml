@@ -1,0 +1,23 @@
+# Policy areas used for zero-shot topic classification.
+#
+# Each document is compared with the description of every area and gets the closest one.
+# These are the same eight areas as version 1, so results stay comparable.
+# To use CollectiveLens in another field, edit this file (or point COLLECTIVELENS_CATEGORIES
+# to your own copy). Longer, more specific descriptions usually work better than single words.
+categories:
+  - name: Higher Education (incl. Civic Education)
+    description: higher education, university, academic, civic education, citizenship
+  - name: Human Rights
+    description: human rights, equality, discrimination, inclusion, diversity, LGBTIQ+
+  - name: Climate Justice
+    description: climate change, environmental, sustainability, green transition
+  - name: Youth Rights & Participation
+    description: youth participation, youth policy, youth rights, young people
+  - name: Peace & Security
+    description: peace education, conflict resolution, security, peacebuilding
+  - name: Mobility / Erasmus
+    description: student mobility, Erasmus, international exchange, study abroad
+  - name: EU Funding & Governance
+    description: EU funding, European policy, EU governance, EU institutions
+  - name: Mental Health & Wellbeing
+    description: mental health, wellbeing, psychological support

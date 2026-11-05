@@ -1,0 +1,15 @@
+# Your own library (full text of your documents). Keep it private; the sample library is in data/sample.
+/library/
+# Secrets and local settings
+.env
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.ipynb_checkpoints/
+# Gradio and caches
+.gradio/
+flagged/
+summary-cache.json
