@@ -36,6 +36,8 @@ You need Python 3.12 (3.10 to 3.13 should work; do not use the very newest relea
 
 **On a Mac, the easy way:** install Python 3.12 from python.org (once), then double-click `start-mac.command`. The first time it creates a private environment, installs everything, asks for your Anthropic API key (optional, it is saved only in a `.env` file on your computer) and opens the app in your browser. If macOS refuses to open the file, right-click it, choose Open, then Open again.
 
+**With nothing to install, in Google Colab:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/fabianamaraffa/CollectiveLens/blob/main/colab/CollectiveLens.ipynb) Run the four steps in the notebook and open the link it prints. Colab already has PyTorch, so this also avoids Python problems on your own computer. Put your Anthropic key (optional) in Colab Secrets under the name `ANTHROPIC_API_KEY`. The link Colab creates is public and temporary: do not share it.
+
 **Anywhere, from the terminal:**
 
 ```bash
@@ -108,13 +110,14 @@ Search, topics, groups and charts run on your machine. Claude is used for two th
 
 ## Tests
 
-`python -m pytest` runs the 72 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
+`python -m pytest` runs the 74 automated tests in a few seconds. They cover reading files, passages, search, topics, groups, citations, caching, the command line and the HTML the app produces, using keyword mode, a fake embedding model and a fake Claude client. They run on GitHub on every push. They do not call the real semantic model or the real Claude API, so run the app once with your key to check those parts on your machine.
 
 ## Repository
 
 ```
 app.py                     starts the web app (also the entry point on Hugging Face Spaces)
 collectivelens/            the package: ingest, passages, search, ask, topics, charts, interface
+colab/                     notebook that runs the app in Google Colab
   categories.yaml          the policy areas (edit this for another field)
 data/sample/               the fictional demo library and its source files
 docs/what-changed.md       what changed from version 1 and why
