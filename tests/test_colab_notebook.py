@@ -20,11 +20,17 @@ def test_colab_notebook_is_clean_and_its_code_compiles():
     assert "sk-ant" not in NOTEBOOK.read_text(encoding="utf-8")
 
 
-def test_colab_notebook_uses_names_that_exist_in_the_package():
-    from collectivelens import ui
+def test_colab_notebook_starts_the_app_in_its_own_process(monkeypatch):
+    from collectivelens.config import Settings
+    from collectivelens.ui import launch_kwargs
 
-    launch_cell = "".join([c for c in load()["cells"] if c["cell_type"] == "code"][-1]["source"])
-    assert "from collectivelens.ui import build_app, launch_kwargs" in launch_cell
-    assert hasattr(ui, "build_app") and hasattr(ui, "launch_kwargs")
-    # Colab only reaches the app through a share link, and launch_kwargs() sets share=False unless told otherwise
-    assert "launch_kwargs(share=True)" in launch_cell
+    cells = [c for c in load()["cells"] if c["cell_type"] == "code"]
+    launch_cell = "".join(cells[-1]["source"])
+    get_cell = "".join(cells[0]["source"])
+    # Colab only reaches the app through a share link; the notebook asks for it with an environment variable
+    assert "COLLECTIVELENS_SHARE" in launch_cell and '"app.py"' in launch_cell and "subprocess.Popen" in launch_cell
+    monkeypatch.setenv("COLLECTIVELENS_SHARE", "1")
+    assert Settings.from_env().share is True and launch_kwargs()["share"] is True
+    # an earlier upload without the demo library must be replaced, not reused
+    assert "data/sample/library/documents.json" in get_cell
+    assert (ROOT / "data" / "sample" / "library" / "documents.json").exists()
