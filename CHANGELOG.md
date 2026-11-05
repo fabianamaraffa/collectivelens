@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.4
+
+- Colab notebook: the app now starts as its own program instead of inside the notebook. On the first real Colab run, the installation updated Pillow while Colab already had the old version loaded, and the search model failed to load with an ImportError. A separate program always sees the installed packages as they are, so no restart is needed.
+- Colab notebook: step 1 checks that the demo library is present and replaces an incomplete earlier upload.
+
+
 ## 2.0.3
 
 - A Google Colab notebook, `colab/CollectiveLens.ipynb`, runs the whole app in the browser with nothing installed on your computer. It gets the code from GitHub (or from an uploaded zip), installs the requirements, reads your Anthropic key from Colab Secrets and starts the app.
