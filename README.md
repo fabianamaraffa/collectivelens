@@ -141,7 +141,7 @@ CHANGELOG.md               list of changes by version
 
 ## How I built this
 
-I am not an engineer. I wrote the code with the help of LLMs, and I can follow what it does thanks to the Applied AI Bootcamp by allWomen. Version 2 was written with Claude: I set the goals and the choices (keep the original, a free online demo, a fictional demo library), and Claude wrote and tested the code. [`docs/what-changed.md`](docs/what-changed.md) lists what was changed and what could not be checked.
+I am not an engineer. I wrote the code with the help of LLMs. Version 2 was written with Claude.
 
 ## Disclaimer
 
