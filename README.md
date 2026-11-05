@@ -10,6 +10,10 @@ Project presentation (Canva): https://www.canva.com/design/DAG7GegjF4M/UsZhMf7yo
 
 <!-- Live demo: add the link to the Hugging Face Space here once it is online. -->
 
+![The header of CollectiveLens in a real run: search by meaning, Claude on](screenshots/v2-status.png)
+
+*The header in a real run on the demo library. "Search by meaning" shows that the semantic model was loaded, and "Claude on" that a key was found.*
+
 ![Search results in CollectiveLens 2](screenshots/v2-search.png)
 
 *Screenshot taken with the demo library, in keyword mode and without a Claude key. With the semantic model, a question in one language can also find documents in another.*
@@ -29,6 +33,8 @@ Umbrella NGOs coordinate many member organisations that publish reports, positio
 7. **Insights.** Charts of topics, topics by year, organisations, and a map of the library.
 
 ![Insights tab](screenshots/v2-insights.png)
+
+*The Insights tab in a real run with the semantic model, on the demo library. Each point on the map is a document: in this run, documents on the same topic sit close together even when they are written in different languages. Treat distances as a rough guide.*
 
 ## Try it in two minutes
 
